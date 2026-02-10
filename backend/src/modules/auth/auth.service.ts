@@ -7,6 +7,8 @@ type CreateAccountParams={
     email:string,
     password:string,
 }
+type LoginParams=Omit<CreateAccountParams,"username">;
+
 
 export const createAccount=async(data: CreateAccountParams)=>{
     const existingUser=await UserModel.exists({email:data.email});
@@ -19,6 +21,7 @@ export const createAccount=async(data: CreateAccountParams)=>{
         password:data.password,
     });
 
+    await user.save();
 
     const refreshToken=jwt.sign(
         {
@@ -49,4 +52,39 @@ export const createAccount=async(data: CreateAccountParams)=>{
         refreshToken,
     };
 
+}
+
+export const login=async(data:LoginParams)=>{
+    const user=await UserModel.findOne({email:data.email});
+    if(!user){
+        throw new Error("Invalid email or password");
+    }
+    const refreshToken=jwt.sign(
+        {
+            userId:user._id,
+        },
+        JWT_REFRESH_SECRET,
+        {
+            audience:["user"],
+            expiresIn:"30d",
+        }
+    );
+
+    const accessToken=jwt.sign(
+        {
+            userId:user._id,
+        },
+        JWT_SECRET,
+        {
+            audience:["user"],
+            expiresIn:"15m",
+        }
+
+    );
+
+    return {
+        user,
+        accessToken,
+        refreshToken,
+    };
 }
