@@ -13,7 +13,7 @@ export interface UserDocument extends mongoose.Document {
 const userSchema = new mongoose.Schema<UserDocument>(
     {
         email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
+        password: { type: String, required: true, select: false },
         Verified: { type: Boolean, default: false,required:true },
     },
     { timestamps: true }

@@ -45,7 +45,7 @@ export const createAccount=async(data: CreateAccountParams)=>{
         }
 
     );
-
+    
     return {
         user,
         accessToken,
@@ -56,9 +56,12 @@ export const createAccount=async(data: CreateAccountParams)=>{
 
 export const login=async(data:LoginParams)=>{
     const user=await UserModel.findOne({email:data.email});
+
+    
     if(!user){
         throw new Error("Invalid email or password");
     }
+
     const refreshToken=jwt.sign(
         {
             userId:user._id,

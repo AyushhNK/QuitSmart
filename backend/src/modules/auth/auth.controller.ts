@@ -12,7 +12,11 @@ export const registerHandler=async(req:Request,res:Response)=>{
     // call service
     const {user, accessToken, refreshToken}=await createAccount(request);
     // return response
-    return res.status(201).json({
+    res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  }).status(201).json({
         user,
         accessToken,
         refreshToken,
@@ -27,7 +31,11 @@ export const loginHandler=async(req:Request,res:Response)=>{
 
     const {user, accessToken, refreshToken}=await login(request);
 
-    return res.status(200).json({
+    res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  }).status(200).json({
         user,
         accessToken,
         refreshToken,
