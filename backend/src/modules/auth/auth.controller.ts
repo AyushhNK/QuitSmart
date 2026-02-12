@@ -41,3 +41,10 @@ export const loginHandler=async(req:Request,res:Response)=>{
         refreshToken,
     });
 }
+
+export const TestHandler=async(req:Request,res:Response)=>{
+    res.status(200).json({
+        message:"Protected route accessed successfully",
+        user:req.user,
+    });
+}
