@@ -26,6 +26,7 @@ export const createAccount=async(data: CreateAccountParams)=>{
     const refreshToken=jwt.sign(
         {
             userId:user._id,
+            Role:user.Role,
         },
         JWT_REFRESH_SECRET,
         {
@@ -37,6 +38,7 @@ export const createAccount=async(data: CreateAccountParams)=>{
     const accessToken=jwt.sign(
         {
             userId:user._id,
+            Role:user.Role,
         },
         JWT_SECRET,
         {
@@ -65,6 +67,7 @@ export const login=async(data:LoginParams)=>{
     const refreshToken=jwt.sign(
         {
             userId:user._id,
+            Role:user.Role,
         },
         JWT_REFRESH_SECRET,
         {
@@ -76,6 +79,7 @@ export const login=async(data:LoginParams)=>{
     const accessToken=jwt.sign(
         {
             userId:user._id,
+            Role:user.Role,
         },
         JWT_SECRET,
         {
