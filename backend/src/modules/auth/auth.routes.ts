@@ -4,9 +4,9 @@ import { registerHandler,loginHandler,TestHandler } from "./auth.controller";
 import authMiddleware from "../../middleware/auth.middleware";
 import { authorize } from "../../middleware/authorize.middleware";
 import { UserRole } from "../users/user.model";
-const userRoutes=Router();
+const authRoutes=Router();
 
-userRoutes.post("/register", catchErrors(registerHandler));
-userRoutes.post("/login", catchErrors(loginHandler));
-userRoutes.get("/test",authMiddleware,authorize(UserRole.ADMIN), catchErrors(TestHandler));
-export default userRoutes;
+authRoutes.post("/register", catchErrors(registerHandler));
+authRoutes.post("/login", catchErrors(loginHandler));
+authRoutes.get("/test",authMiddleware,authorize(UserRole.ADMIN), catchErrors(TestHandler));
+export default authRoutes;
