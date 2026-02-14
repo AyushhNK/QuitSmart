@@ -24,12 +24,12 @@ export const createAccount=async(data: CreateAccountParams)=>{
 
     await user.save();
 
-    const refreshToken:String=await generateRefreshToken({
+    const refreshToken:String=generateRefreshToken({
         userId:user._id.toString(),
         Role:user.Role,
     });
 
-    const accessToken:String=await generateAccessToken({
+    const accessToken:String=generateAccessToken({
         userId:user._id.toString(),
         Role:user.Role,
     });
