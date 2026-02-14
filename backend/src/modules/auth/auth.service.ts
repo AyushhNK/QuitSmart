@@ -1,6 +1,7 @@
 import UserModel from "../users/user.model";
 import jwt from "jsonwebtoken";
 import { JWT_REFRESH_SECRET, JWT_SECRET } from "../../config/env";
+import { generateAccessToken,generateRefreshToken } from "../../utils/jwt";
 
 type CreateAccountParams={
     username:string,
@@ -23,30 +24,15 @@ export const createAccount=async(data: CreateAccountParams)=>{
 
     await user.save();
 
-    const refreshToken=jwt.sign(
-        {
-            userId:user._id,
-            Role:user.Role,
-        },
-        JWT_REFRESH_SECRET,
-        {
-            audience:["user"],
-            expiresIn:"30d",
-        }
-    );
+    const refreshToken:String=await generateRefreshToken({
+        userId:user._id.toString(),
+        Role:user.Role,
+    });
 
-    const accessToken=jwt.sign(
-        {
-            userId:user._id,
-            Role:user.Role,
-        },
-        JWT_SECRET,
-        {
-            audience:["user"],
-            expiresIn:"15m",
-        }
-
-    );
+    const accessToken:String=await generateAccessToken({
+        userId:user._id.toString(),
+        Role:user.Role,
+    });
     
     return {
         user,
@@ -64,30 +50,15 @@ export const login=async(data:LoginParams)=>{
         throw new Error("Invalid email or password");
     }
 
-    const refreshToken=jwt.sign(
-        {
-            userId:user._id,
-            Role:user.Role,
-        },
-        JWT_REFRESH_SECRET,
-        {
-            audience:["user"],
-            expiresIn:"30d",
-        }
-    );
+    const refreshToken:String=await generateRefreshToken({
+        userId:user._id.toString(),
+        Role:user.Role,
+    });
 
-    const accessToken=jwt.sign(
-        {
-            userId:user._id,
-            Role:user.Role,
-        },
-        JWT_SECRET,
-        {
-            audience:["user"],
-            expiresIn:"15m",
-        }
-
-    );
+    const accessToken:String=await generateAccessToken({
+        userId:user._id.toString(),
+        Role:user.Role,
+    });
 
     return {
         user,
