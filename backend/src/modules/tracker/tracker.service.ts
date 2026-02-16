@@ -1,12 +1,21 @@
 import { TrackerRepository } from "./tracker.repository";
 import { CreateSmokingEntryInput } from "./tracker.types";
+import { publishEvent } from "../../kafka/producer";
 
 export class TrackerService {
   private repo = new TrackerRepository();
 
+
   async logCigarette(userId: string, data: CreateSmokingEntryInput) {
-    return this.repo.create(userId, data);
-  }
+  const entry = await this.repo.create(userId, data);
+
+  await publishEvent("cigarette.logged", {
+    userId,
+    entryId: entry._id,
+  });
+
+  return entry;
+}
 
   async getHistory(userId: string, from?: string, to?: string) {
     const fromDate = from ? new Date(from) : undefined;

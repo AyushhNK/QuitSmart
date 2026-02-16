@@ -7,10 +7,6 @@ export class NotificationService {
 
   async send(userId: string, data: CreateNotificationInput) {
     const notification = await this.repo.create(userId, data);
-
-    // 🔥 Future: push to email/queue
-    // await notificationQueue.add("send-email", { userId, ...data });
-
     return notification;
   }
 
