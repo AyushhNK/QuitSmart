@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { GoalsController } from "./goals.controller";
+import authenticate from "../../middleware/auth.middleware";
 
 const router = Router();
 const controller = new GoalsController();
 
+router.use(authenticate);
 
 
 router.post("/", controller.create.bind(controller));

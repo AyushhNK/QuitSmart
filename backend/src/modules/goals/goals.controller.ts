@@ -8,7 +8,8 @@ export class GoalsController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
+      console.log("Creating goal for user:", userId, "with data:", req.body);
 
       const data = createGoalSchema.parse(req.body);
 
@@ -22,7 +23,7 @@ export class GoalsController {
 
   async getActive(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       const goal = await service.getActiveGoal(userId);
 
@@ -34,7 +35,7 @@ export class GoalsController {
 
   async complete(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       const goal = await service.completeGoal(userId);
 
@@ -50,7 +51,7 @@ export class GoalsController {
     next: NextFunction
   ) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const { id } = req.params;
 
       await service.deleteGoal(userId, id);

@@ -7,7 +7,7 @@ const service = new TrackerService();
 export class TrackerController {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user.id; // from auth middleware
+      const userId = req.user.userId; // from auth middleware
       const data = createSmokingEntrySchema.parse(req.body);
 
       const entry = await service.logCigarette(userId, data);
@@ -23,8 +23,9 @@ export class TrackerController {
 
   async history(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId; 
       const { from, to } = querySchema.parse(req.query);
+      console.log("Fetching history for user:", userId, "from:", from, "to:", to);
 
       const entries = await service.getHistory(userId, from, to);
 
@@ -36,7 +37,7 @@ export class TrackerController {
 
   async todayCount(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       const count = await service.getTodayCount(userId);
 
@@ -51,7 +52,7 @@ export class TrackerController {
      res: Response,
       next: NextFunction) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
       const { id } = req.params;
 
       await service.deleteEntry(id, userId);

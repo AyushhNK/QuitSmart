@@ -18,11 +18,18 @@ export class TrackerService {
 }
 
   async getHistory(userId: string, from?: string, to?: string) {
-    const fromDate = from ? new Date(from) : undefined;
-    const toDate = to ? new Date(to) : undefined;
+  const fromDate = from ? new Date(from) : undefined;
 
-    return this.repo.findByUser(userId, fromDate, toDate);
+  let toDate: Date | undefined;
+
+  if (to) {
+    toDate = new Date(to);
+    toDate.setHours(23, 59, 59, 999); // 🔥 important fix
   }
+
+  return this.repo.findByUser(userId, fromDate, toDate);
+}
+
 
   async getTodayCount(userId: string) {
     return this.repo.countToday(userId);

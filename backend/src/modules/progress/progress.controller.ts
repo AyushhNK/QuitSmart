@@ -7,7 +7,7 @@ export class ProgressController {
 
   async summary(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.userId;
 
       // Ideally fetched from user profile
       const baselinePerDay = Number(req.query.baseline || 10);
