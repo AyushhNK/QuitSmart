@@ -1,19 +1,30 @@
-import 'dotenv/config';
-import { MONGO_URI, PORT } from './config/env';
-import app from './app';
-import { connectDB } from './config/db';
-import { connectProducer } from './kafka/producer';
-import { startConsumer } from './kafka/consumer';
-import { start } from 'node:repl';
-
+import "dotenv/config";
+import http from "http";
+import { MONGO_URI, PORT } from "./config/env";
+import app from "./app";
+import { connectDB } from "./config/db";
+import { connectProducer } from "./kafka/producer";
+import { startConsumer } from "./kafka/consumer";
+import { initSocket } from "./socket/socket";
 
 async function startServer() {
-    await connectDB(MONGO_URI);
-    await connectProducer();
-    await startConsumer();
+  // Connect DB
+  await connectDB(MONGO_URI);
 
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
+  // Connect Kafka
+  await connectProducer();
+  await startConsumer();
+
+  // 🔥 Create HTTP server instead of app.listen
+  const server = http.createServer(app);
+
+  // 🔥 Initialize socket
+  initSocket(server);
+
+  // Start server
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
 }
-startServer()
+
+startServer();

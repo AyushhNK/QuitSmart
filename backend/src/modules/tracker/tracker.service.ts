@@ -1,6 +1,7 @@
 import { TrackerRepository } from "./tracker.repository";
 import { CreateSmokingEntryInput } from "./tracker.types";
 import { publishEvent } from "../../kafka/producer";
+import { getIO } from "../../socket/socket";
 
 export class TrackerService {
   private repo = new TrackerRepository();
@@ -13,6 +14,9 @@ export class TrackerService {
     userId,
     entryId: entry._id,
   });
+
+  const io = getIO();
+  io.to(userId).emit("cigaretteLogged", entry);
 
   return entry;
 }
@@ -38,6 +42,8 @@ export class TrackerService {
   async deleteEntry(entryId: string, userId: string) {
     const deleted = await this.repo.delete(entryId, userId);
     if (!deleted) throw new Error("Entry not found");
+    const io = getIO();
+    io.to(userId).emit("entryDeleted", entryId);
     return deleted;
   }
 }
