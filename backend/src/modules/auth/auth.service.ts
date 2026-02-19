@@ -66,3 +66,18 @@ export const login=async(data:LoginParams)=>{
         refreshToken,
     };
 }
+
+export class AuthService {
+  async findOrCreateOAuthUser(data: any) {
+    let user = await UserModel.findOne({
+      provider: data.provider,
+      providerId: data.providerId,
+    });
+
+    if (!user) {
+      user = await UserModel.create(data);
+    }
+
+    return user;
+  }
+}
