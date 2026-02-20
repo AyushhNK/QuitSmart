@@ -7,6 +7,11 @@ export class ProgressController {
 
   async summary(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId;
 
       // Ideally fetched from user profile

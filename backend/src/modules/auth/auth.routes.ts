@@ -1,34 +1,42 @@
-import { Router } from "express";
-import catchErrors from "../../utils/catchError";
-import { registerHandler,loginHandler,TestHandler } from "./auth.controller";
 import authMiddleware from "../../middleware/auth.middleware";
-import { authorize } from "../../middleware/authorize.middleware";
-import { UserRole } from "../users/user.model";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../../config/env";
 import passport from "./passport.config";
-const authRoutes=Router();
+import { Request,Response } from "express";
+import { Router } from "express";
+import { AuthController } from "./auth.controller";
+import { catchErrors } from "../../utils/catchError";
 
-authRoutes.post("/register", catchErrors(registerHandler));
-authRoutes.post("/login", catchErrors(loginHandler));
-authRoutes.get("/test",authMiddleware,authorize(UserRole.ADMIN), catchErrors(TestHandler));
+const router = Router();
+const controller = new AuthController();
 
-authRoutes.get(
+router.post("/register", catchErrors(controller.register));
+router.post("/login", catchErrors(controller.login));
+router.get("/test", authMiddleware, catchErrors(controller.test));
+
+
+router.get(
   "/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
   })
 );
 
-authRoutes.get(
+router.get(
   "/google/callback",
   passport.authenticate("google", {
     session: false,
     failureRedirect: "/login",
   }),
-  (req: any, res) => {
+  (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({
+        message: "Unauthorized - No user information",
+      });
+    }
     const token = jwt.sign(
-      { userId: req.user._id },
+
+      { userId: req.user.userId },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -36,4 +44,4 @@ authRoutes.get(
     res.json({ token });
   }
 );
-export default authRoutes;
+export default router;

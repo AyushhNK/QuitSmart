@@ -7,6 +7,11 @@ const service = new TrackerService();
 export class TrackerController {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId; // from auth middleware
       const data = createSmokingEntrySchema.parse(req.body);
 
@@ -23,6 +28,11 @@ export class TrackerController {
 
   async history(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId; 
       const { from, to } = querySchema.parse(req.query);
       console.log("Fetching history for user:", userId, "from:", from, "to:", to);
@@ -37,6 +47,11 @@ export class TrackerController {
 
   async todayCount(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId;
 
       const count = await service.getTodayCount(userId);
@@ -52,6 +67,11 @@ export class TrackerController {
      res: Response,
       next: NextFunction) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId;
       const { id } = req.params;
 

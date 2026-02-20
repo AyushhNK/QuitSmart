@@ -1,12 +1,8 @@
 import jwt from "jsonwebtoken";
 import { JWT_REFRESH_SECRET, JWT_SECRET } from "../config/env";
+import { JwtUserPayload } from "../types/auth.types";
 
-type Payload={
-    userId:string,
-    Role:string,
-}
-
-export const generateRefreshToken=(payload:Payload):String=>{
+export const generateRefreshToken=(payload:JwtUserPayload):String=>{
     return jwt.sign(
         payload,
         JWT_REFRESH_SECRET,
@@ -16,7 +12,7 @@ export const generateRefreshToken=(payload:Payload):String=>{
     );
 }
 
-export const generateAccessToken=(payload:Payload):String=>{
+export const generateAccessToken=(payload:JwtUserPayload):String=>{
     return jwt.sign(
         payload,
         JWT_SECRET,

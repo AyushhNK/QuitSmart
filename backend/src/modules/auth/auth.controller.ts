@@ -1,50 +1,64 @@
-import catchErrors from "../../utils/catchError";
-import { email, z } from "zod";
-import { createAccount,login } from "./auth.service";
-import { Request, Response } from "express";
-import {registerSchema, loginSchema} from "./auth.schema";
+import { Request,Response } from "express";
+import { createAccount, login } from "./auth.service";
+import { registerSchema, loginSchema } from "./auth.schema";
+import logger from "../../utils/logger";
 
-export const registerHandler=async(req:Request,res:Response)=>{
-    // validate request
-    const request=registerSchema.parse({
-        ...req.body,
-    });
-    // call service
-    const {user, accessToken, refreshToken}=await createAccount(request);
-    // return response
-    res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-  }).status(201).json({
-        user,
-        accessToken,
-        refreshToken,
-    });
-};
+export class AuthController {
+  // Register user
+  async register(req: Request, res: Response) {
+    logger.info("Register request received");
 
-export const loginHandler=async(req:Request,res:Response)=>{
-    // validate request
-    const request=loginSchema.parse({
-        ...req.body,
-    });
+    const request = registerSchema.parse({ ...req.body });
+    logger.debug(`Creating account for email: ${request.email}`);
 
-    const {user, accessToken, refreshToken}=await login(request);
+    const { user, accessToken, refreshToken } = await createAccount(request);
 
-    res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-  }).status(200).json({
-        user,
-        accessToken,
-        refreshToken,
-    });
-}
+    logger.info(`User registered successfully: ${user.id}`);
 
-export const TestHandler=async(req:Request,res:Response)=>{
+    res
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      })
+      .status(201)
+      .json({ user, accessToken, refreshToken });
+  }
+
+  // Login user
+  async login(req: Request, res: Response) {
+    logger.info("Login request received");
+
+    const request = loginSchema.parse({ ...req.body });
+    logger.debug(`Login attempt for email: ${request.email}`);
+
+    const { user, accessToken, refreshToken } = await login(request);
+
+    logger.info(`User logged in successfully: ${user.id}`);
+
+    res
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      })
+      .status(200)
+      .json({ user, accessToken, refreshToken });
+  }
+
+  // Test protected route
+  async test(req: Request, res: Response) {
+    if (!req.user) {
+      logger.warn("Unauthorized access attempt to protected route");
+      return res.status(401).json({
+        message: "Unauthorized - No user information",
+      });
+    }
+    logger.info(`Protected route accessed by user: ${req.user.userId}`);
+
     res.status(200).json({
-        message:"Protected route accessed successfully",
-        user:req.user,
+      message: "Protected route accessed successfully",
+      user: req.user,
     });
+  }
 }

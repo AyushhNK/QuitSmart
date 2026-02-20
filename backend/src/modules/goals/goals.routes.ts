@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { GoalsController } from "./goals.controller";
 import authenticate from "../../middleware/auth.middleware";
+import { catchErrors } from "../../utils/catchError";
+
 
 const router = Router();
 const controller = new GoalsController();
@@ -8,9 +10,9 @@ const controller = new GoalsController();
 router.use(authenticate);
 
 
-router.post("/", controller.create.bind(controller));
-router.get("/active", controller.getActive.bind(controller));
-router.patch("/complete", controller.complete.bind(controller));
-router.delete("/:id", controller.delete.bind(controller));
+router.post("/", catchErrors(controller.create));
+router.get("/active", catchErrors(controller.getActive));
+router.patch("/complete", catchErrors(controller.complete));
+router.delete("/:id", catchErrors(controller.delete));
 
 export default router;

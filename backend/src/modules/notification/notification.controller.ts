@@ -7,6 +7,11 @@ export class NotificationController {
 
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId;
 
       const notifications = await service.getUserNotifications(userId);
@@ -23,7 +28,12 @@ export class NotificationController {
     next: NextFunction
   ) {
     try {
-      const userId = req.user.userId;
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
+      const userId = req.user?.userId;
       const { id } = req.params;
 
       const notification = await service.markAsRead(id, userId);
@@ -36,6 +46,11 @@ export class NotificationController {
 
   async markAll(req: Request, res: Response, next: NextFunction) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId;
 
       await service.markAllAsRead(userId);
@@ -52,6 +67,11 @@ export class NotificationController {
     next: NextFunction
   ) {
     try {
+      if (!req.user) {
+        return res.status(401).json({
+          message: "Unauthorized - No user information",
+        });
+      }
       const userId = req.user.userId;
       const { id } = req.params;
 
