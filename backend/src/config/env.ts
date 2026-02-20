@@ -13,3 +13,4 @@ export const JWT_SECRET=getenv('JWT_SECRET');
 export const JWT_REFRESH_SECRET=getenv('JWT_REFRESH_SECRET');
 export const GOOGLE_CLIENT_ID=getenv('GOOGLE_CLIENT_ID');
 export const GOOGLE_CLIENT_SECRET=getenv('GOOGLE_CLIENT_SECRET');
+export const NODE_ENV=getenv('NODE_ENV','development');

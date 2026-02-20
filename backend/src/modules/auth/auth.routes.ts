@@ -12,6 +12,7 @@ const authRoutes=Router();
 authRoutes.post("/register", catchErrors(registerHandler));
 authRoutes.post("/login", catchErrors(loginHandler));
 authRoutes.get("/test",authMiddleware,authorize(UserRole.ADMIN), catchErrors(TestHandler));
+
 authRoutes.get(
   "/google",
   passport.authenticate("google", {
@@ -19,7 +20,6 @@ authRoutes.get(
   })
 );
 
-// Step 2 → Callback
 authRoutes.get(
   "/google/callback",
   passport.authenticate("google", {
