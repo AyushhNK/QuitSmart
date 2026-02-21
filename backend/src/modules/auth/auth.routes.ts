@@ -6,16 +6,17 @@ import { Request,Response } from "express";
 import { Router } from "express";
 import { AuthController } from "./auth.controller";
 import { catchErrors } from "../../utils/catchError";
+import { authRateLimiter } from "../../middleware/rateLimiter.middleware";
 
 const router = Router();
 const controller = new AuthController();
 
-router.post("/register", catchErrors(controller.register));
-router.post("/login", catchErrors(controller.login));
-router.get("/test", authMiddleware, catchErrors(controller.test));
-router.post("/forgot-password", catchErrors(controller.forgotPassword));
-router.post("/reset-password/:token", catchErrors(controller.resetPassword));
-
+router.post("/register",authRateLimiter, catchErrors(controller.register));
+router.post("/login",authRateLimiter, catchErrors(controller.login));
+router.get("/test", authMiddleware,authRateLimiter, catchErrors(controller.test));
+router.post("/forgot-password", authRateLimiter, catchErrors(controller.forgotPassword));
+router.post("/reset-password/:token", authRateLimiter, catchErrors(controller.resetPassword));
+  
 
 router.get(
   "/google",
