@@ -12,7 +12,7 @@ export class TrackerController {
           message: "Unauthorized - No user information",
         });
       }
-      const userId = req.user.userId; // from auth middleware
+      const userId = req.user.userId; 
       const data = createSmokingEntrySchema.parse(req.body);
 
       const entry = await service.logCigarette(userId, data);

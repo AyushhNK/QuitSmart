@@ -7,6 +7,8 @@ import { connectProducer } from "./kafka/producer";
 import { startConsumer } from "./kafka/consumer";
 import { initSocket } from "./socket/socket";
 import logger from "./utils/logger";
+import { startCravingScheduler } from "./modules/craving/craving.scheduler";
+import { log } from "console";
 
 
 async function startServer() {
@@ -19,6 +21,9 @@ async function startServer() {
   logger.info("Connected to Kafka Producer");
   await startConsumer();
   logger.info("Kafka Consumer started");
+
+  startCravingScheduler();
+  logger.info("Craving Scheduler started");
 
   // 🔥 Create HTTP server instead of app.listen
   const server = http.createServer(app);

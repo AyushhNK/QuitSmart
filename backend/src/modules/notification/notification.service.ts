@@ -39,4 +39,26 @@ export class NotificationService {
     io.to(userId).emit("notificationDeleted", notificationId);
     return deleted;
   }
+
+  private messages = [
+    "You usually smoke around this time. Try a 5-minute breathing exercise now.",
+    "Craving alert! Take a short walk instead of smoking.",
+    "Feeling the urge? Drink a glass of water and breathe deeply.",
+    "Time for your usual smoke? Try stretching for 5 minutes instead.",
+    "Notice the craving? Listen to a favorite song or meditate for a bit.",
+    "Your peak smoking time! Challenge yourself: skip it and do a quick exercise."
+  ];
+
+  async sendPreCravingNotification(userId: string) {
+    // Pick a random message
+    const randomIndex = Math.floor(Math.random() * this.messages.length);
+    const message = this.messages[randomIndex];
+
+    console.log(`Sending craving alert to ${userId}: "${message}"`);
+
+    // Send via socket
+    const io = getIO();
+    io.to(userId).emit("preCravingAlert", { message, timestamp: new Date() });
+
+  }
 }

@@ -109,7 +109,7 @@ export const forgotPassword=async(email: string) =>{
 
     const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
 
-    // Send Email (implement nodemailer separately)
+    // here i need to send email with resetUrl, for now just log it
     console.log("Reset Link:", resetUrl);
   }
 

@@ -23,7 +23,6 @@ const authMiddleware = (
       process.env.JWT_SECRET as string
     ) as JwtUserPayload;
 
-    // Attach user info to request
     req.user = decoded;
 
     next();

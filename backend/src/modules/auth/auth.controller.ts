@@ -55,6 +55,7 @@ export class AuthController {
     await resetPassword(req.params.token, req.body.password);
     res.json({ message: "Password reset successful" });
   }
+  
   // Test protected route
   async test(req: Request, res: Response) {
     if (!req.user) {
