@@ -1,5 +1,5 @@
 import { Request,Response } from "express";
-import { createAccount, login } from "./auth.service";
+import { createAccount, login,forgotPassword,resetPassword } from "./auth.service";
 import { registerSchema, loginSchema } from "./auth.schema";
 import logger from "../../utils/logger";
 
@@ -46,6 +46,15 @@ export class AuthController {
       .json({ user, accessToken, refreshToken });
   }
 
+  async forgotPassword(req: Request, res: Response) {
+    await forgotPassword(req.body.email);
+    res.json({ message: "If email exists, reset link sent." });
+  }
+
+  async resetPassword(req: Request<{ token: string }>, res: Response) {
+    await resetPassword(req.params.token, req.body.password);
+    res.json({ message: "Password reset successful" });
+  }
   // Test protected route
   async test(req: Request, res: Response) {
     if (!req.user) {

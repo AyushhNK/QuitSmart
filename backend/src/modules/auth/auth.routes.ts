@@ -13,6 +13,8 @@ const controller = new AuthController();
 router.post("/register", catchErrors(controller.register));
 router.post("/login", catchErrors(controller.login));
 router.get("/test", authMiddleware, catchErrors(controller.test));
+router.post("/forgot-password", catchErrors(controller.forgotPassword));
+router.post("/reset-password/:token", catchErrors(controller.resetPassword));
 
 
 router.get(

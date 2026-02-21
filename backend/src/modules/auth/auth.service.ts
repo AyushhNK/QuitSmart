@@ -1,6 +1,8 @@
 import UserModel from "../users/user.model";
 import logger from "../../utils/logger";
 import { generateAccessToken,generateRefreshToken } from "../../utils/jwt";
+import { generateResetToken, hashToken } from "../../utils/token";
+import { hashValue } from "../../utils/bcrypt";
 
 type CreateAccountParams={
     username:string,
@@ -76,8 +78,8 @@ export const login=async(data:LoginParams)=>{
     };
 }
 
-export class AuthService {
-  async findOrCreateOAuthUser(data: any) {
+
+export const findOrCreateOAuthUser=async(data: any) =>{
     logger.info(`OAuth login attempt - Provider: ${data.provider}`);
     let user = await UserModel.findOne({
       provider: data.provider,
@@ -91,4 +93,41 @@ export class AuthService {
 
     return user;
   }
-}
+
+
+export const forgotPassword=async(email: string) =>{
+    const user = await UserModel.findOne({ email });
+    if (!user) return; // Don't reveal email existence (security)
+
+    const resetToken = generateResetToken();
+    const hashedToken = hashToken(resetToken);
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+
+    await user.save();
+
+    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+
+    // Send Email (implement nodemailer separately)
+    console.log("Reset Link:", resetUrl);
+  }
+
+  export const resetPassword=async(token: string, newPassword: string) => {
+    const hashedToken = hashToken(token);
+
+    const user = await UserModel.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      throw new Error("Invalid or expired token");
+    }
+
+    user.password = await hashValue(newPassword);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+  }

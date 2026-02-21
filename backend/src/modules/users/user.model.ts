@@ -14,6 +14,8 @@ export interface UserDocument extends mongoose.Document {
     Role:UserRole;
     createdAt: Date;
     updatedAt: Date;
+    resetPasswordToken?: string;
+    resetPasswordExpires?: Date;
     comparePassword(val: string): Promise<boolean>;
 }
 
@@ -23,6 +25,8 @@ const userSchema = new mongoose.Schema<UserDocument>(
         password: { type: String, required: true, select: false },
         Verified: { type: Boolean, default: false,required:true },
         Role:{type:String,default:UserRole.USER,enum:Object.values(UserRole),required:true},
+        resetPasswordToken: { type: String, select: false },
+        resetPasswordExpires: { type: Date, select: false },
     },
     { timestamps: true }
 );
